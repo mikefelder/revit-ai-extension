@@ -1,0 +1,28 @@
+# ---- .NET / Visual Studio ----
+bin/
+obj/
+.vs/
+*.user
+*.suo
+*.userprefs
+project.lock.json
+artifacts/
+
+# ---- Node (TS MCP server in vendored fork) ----
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# ---- Secrets & local config (real config is git-ignored; sample is committed) ----
+config/appsettings.json
+*.env
+.env
+secrets.json
+
+# ---- Logs & local session data ----
+logs/
+*.log
+
+# ---- OS ----
+.DS_Store
+Thumbs.db

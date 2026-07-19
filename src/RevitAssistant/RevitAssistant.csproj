@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    RevitAssistant: the Revit add-in (spec §2.2, §5.1, §7 Phase 2). WPF dockable panel + agent
+    UI. Builds on WINDOWS ONLY (net8.0-windows, Revit API, WPF).
+    Revit API is referenced via the Nice3point metapackages; versions track the Revit year and
+    are PROVISIONAL until verified in Phase 0. Revit API assemblies must not be copied to output.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <!-- Revit loads add-ins into its own AppDomain; do not emit an app host. -->
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AgentCore\AgentCore.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Nice3point.Revit.Api.RevitAPI" Version="2026.0.0" />
+    <PackageReference Include="Nice3point.Revit.Api.RevitAPIUI" Version="2026.0.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
+  </ItemGroup>
+
+  <!-- Deploy the add-in manifest alongside the build output. -->
+  <ItemGroup>
+    <None Update="RevitAssistant.addin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

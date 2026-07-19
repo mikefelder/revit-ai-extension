@@ -1,0 +1,30 @@
+<UserControl x:Class="RevitAssistant.AssistantPane"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             MinWidth="380">
+    <!-- Chat panel layout (spec §5.1): context strip, message list, input box.
+         Real templates/controls are added in Phase 2. -->
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Context strip: document, active view, selection count (spec §5.4). -->
+        <Border Grid.Row="0" Padding="8" Background="#20808080">
+            <TextBlock Text="Context strip (scaffold)" />
+        </Border>
+
+        <!-- Message list: user / assistant / tool-event entries (spec §5.1). -->
+        <ScrollViewer Grid.Row="1">
+            <ItemsControl x:Name="MessageList" />
+        </ScrollViewer>
+
+        <!-- Input box + Send/Stop (spec §5.1). -->
+        <DockPanel Grid.Row="2" LastChildFill="True" Margin="8">
+            <Button DockPanel.Dock="Right" Content="Send" x:Name="SendButton" Margin="8,0,0,0" />
+            <TextBox x:Name="InputBox" AcceptsReturn="True" MinHeight="48" />
+        </DockPanel>
+    </Grid>
+</UserControl>

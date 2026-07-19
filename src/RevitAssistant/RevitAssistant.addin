@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Revit add-in manifest (spec §7 Phase 2). Installed to
+     %AppData%\Autodesk\Revit\Addins\2026\ by tools/install.ps1.
+     Replace <ASSEMBLY-PATH> at install time and generate a stable AddInId GUID. -->
+<RevitAddIns>
+  <AddIn Type="Application">
+    <Name>Revit AI Assistant</Name>
+    <Assembly>RevitAssistant.dll</Assembly>
+    <FullClassName>RevitAssistant.App</FullClassName>
+    <ClientId>00000000-0000-0000-0000-000000000000</ClientId>
+    <VendorId>com.revit-ai-agent</VendorId>
+    <VendorDescription>Revit AI Agent (personal project)</VendorDescription>
+  </AddIn>
+</RevitAddIns>
