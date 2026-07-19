@@ -5,14 +5,16 @@ panel inside Revit, backed by a model deployed in **Azure AI Foundry**, that can
 and (with explicit user approval) modify the open Revit model via the **Model Context Protocol
 (MCP)**.
 
-> **Source of truth:** [`docs/revit-ai-agent-spec.md`](docs/revit-ai-agent-spec.md).
+> **Source of truth:** [`docs/revit-ai-spec.md`](docs/revit-ai-spec.md).
 > This README is a short orientation; the spec governs all architecture and scope decisions.
 
 ## Status
 
-Repository scaffold only — project structure and skeleton types are in place; **no logic is
-implemented yet**. Build wiring (NuGet versions, the vendored fork) is resolved in Phase 0/1 of
-the spec.
+**Phase 1 in progress.** `AgentCore` (config, transcript, MCP tool broker, Foundry streaming
+client, agent loop) and the `ConsoleHarness` are implemented and building on `net8.0`; 18
+`AgentCore.Tests` pass (classification, truncation, config binding, transcript round-trip,
+context rendering, and agent-loop approve/reject/max-iteration behavior). Still pending: Phase 0
+(vendored fork submodule + real MCP tool-name discovery) and Phase 2 (`RevitAssistant` WPF panel).
 
 ## Layout
 

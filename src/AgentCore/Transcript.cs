@@ -1,3 +1,6 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
 namespace AgentCore;
 
 /// <summary>
@@ -6,18 +9,40 @@ namespace AgentCore;
 /// </summary>
 public sealed class Transcript
 {
+    private static readonly JsonSerializerOptions SerializerOptions = new()
+    {
+        WriteIndented = true,
+        Converters = { new JsonStringEnumConverter() },
+    };
+
     private readonly List<ChatMessage> _messages = [];
 
     public IReadOnlyList<ChatMessage> Messages => _messages;
 
     public void Add(ChatMessage message) => _messages.Add(message);
 
-    /// <summary>Persist the transcript to disk as JSON. TODO(spec §5.1).</summary>
-    public Task SaveAsync(string path, CancellationToken ct) => throw new NotImplementedException();
+    /// <summary>Persist the transcript to disk as JSON (spec §5.1).</summary>
+    public async Task SaveAsync(string path, CancellationToken ct)
+    {
+        var dir = Path.GetDirectoryName(path);
+        if (!string.IsNullOrEmpty(dir))
+            Directory.CreateDirectory(dir);
 
-    /// <summary>Load a persisted transcript from disk. TODO(spec §5.1).</summary>
-    public static Task<Transcript> LoadAsync(string path, CancellationToken ct) =>
-        throw new NotImplementedException();
+        await using var stream = File.Create(path);
+        await JsonSerializer.SerializeAsync(stream, _messages, SerializerOptions, ct);
+    }
+
+    /// <summary>Load a persisted transcript from disk (spec §5.1).</summary>
+    public static async Task<Transcript> LoadAsync(string path, CancellationToken ct)
+    {
+        await using var stream = File.OpenRead(path);
+        var messages = await JsonSerializer.DeserializeAsync<List<ChatMessage>>(
+            stream, SerializerOptions, ct) ?? [];
+
+        var transcript = new Transcript();
+        transcript._messages.AddRange(messages);
+        return transcript;
+    }
 }
 
 public enum ChatRole

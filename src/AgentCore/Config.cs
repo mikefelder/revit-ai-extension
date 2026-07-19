@@ -1,3 +1,6 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
 namespace AgentCore;
 
 /// <summary>
@@ -14,8 +17,50 @@ public sealed class AppConfig
     public required RevitConfig Revit { get; init; }
     public required LoggingConfig Logging { get; init; }
 
-    /// <summary>Load and validate configuration from the given path. TODO(spec §6).</summary>
-    public static AppConfig Load(string path) => throw new NotImplementedException();
+    private static readonly JsonSerializerOptions SerializerOptions = new()
+    {
+        PropertyNameCaseInsensitive = true,
+        ReadCommentHandling = JsonCommentHandling.Skip,
+        AllowTrailingCommas = true,
+        Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) },
+    };
+
+    /// <summary>Load and validate configuration from the given path (spec §6).</summary>
+    public static AppConfig Load(string path)
+    {
+        if (string.IsNullOrWhiteSpace(path))
+            throw new ArgumentException("Config path must be provided.", nameof(path));
+        if (!File.Exists(path))
+            throw new FileNotFoundException($"Configuration file not found: {path}", path);
+
+        var json = File.ReadAllText(path);
+        AppConfig config;
+        try
+        {
+            config = JsonSerializer.Deserialize<AppConfig>(json, SerializerOptions)
+                ?? throw new InvalidOperationException($"Configuration file is empty: {path}");
+        }
+        catch (JsonException ex)
+        {
+            throw new InvalidOperationException($"Configuration file is not valid JSON: {path}", ex);
+        }
+
+        config.Validate();
+        return config;
+    }
+
+    private void Validate()
+    {
+        if (string.IsNullOrWhiteSpace(Foundry.Endpoint))
+            throw new InvalidOperationException("foundry.endpoint is required.");
+        if (string.IsNullOrWhiteSpace(Foundry.Deployment))
+            throw new InvalidOperationException("foundry.deployment is required.");
+        if (Foundry.Auth == FoundryAuthMode.ApiKey && string.IsNullOrWhiteSpace(Foundry.ApiKeyEnvVar))
+            throw new InvalidOperationException(
+                "foundry.apiKeyEnvVar is required when auth is 'apiKey'.");
+        if (string.IsNullOrWhiteSpace(Mcp.ServerCommand))
+            throw new InvalidOperationException("mcp.serverCommand is required.");
+    }
 }
 
 public enum FoundryAuthMode
